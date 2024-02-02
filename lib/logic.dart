@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_final_fields
 import 'package:matrix_word_traversal_test/model.dart';
 
 /// Main Logic
@@ -24,24 +25,27 @@ class SearchFor {
     // counter to get number of matched alphabets
     int count = 1;
 
-    if (c == topLimit - 1 &&
-        text.length ==
-            1) // function to check the last index if one letter is serached
+    // function to check the last index if one letter is serached
+    if (c == topLimit - 1 && text.length == 1) {
       return true;
+    }
 
-    if (c == topLimit - 1) // function to check if this is the last column value
+    // function to check if this is the last column value
+    if (c == topLimit - 1) {
       return false;
+    }
 
     int k = c + 1, w = 1;
+    // function to match the pattern alphabets
     for (; w < text.length; w++, k++) {
-      // function to match the pattern alphabets
       if (inGrid[r][k] == text.substring(w, 1 + w)) count++;
-      if (k ==
-          topLimit - 1) // function to check if this is the last column value
+      // function to check if this is the last column value
+      if (k == topLimit - 1) {
         break;
+      }
     }
-    return count ==
-        text.length; // if all the letters in the pattern are matching
+    // if all the letters in the pattern are matching
+    return count == text.length;
   }
 
   /// checking in SOUTH direction for any possible matches
@@ -51,20 +55,24 @@ class SearchFor {
     // counter to get number of matched alphabets
     int count = 1;
 
-    if (c == topLimit - 1 &&
-        text.length ==
-            1) // function to check the last index if one letter is serached
+    // function to check the last index if one letter is serached
+    if (c == topLimit - 1 && text.length == 1) {
       return true;
+    }
 
-    if (r == topLimit - 1) // function to check if this is the last row value
+    // function to check if this is the last row value
+    if (r == topLimit - 1) {
       return false;
+    }
 
     int t = r + 1, w = 1;
+    // function to match the pattern alphabets
     for (; w < text.length; w++, t++) {
-      // function to match the pattern alphabets
       if (inGrid[t][c] == text.substring(w, 1 + w)) count++;
-      if (t == topLimit - 1) // function to check if this is the last row value
+      // function to check if this is the last row value
+      if (t == topLimit - 1) {
         break;
+      }
     }
     return count == text.length;
   }
@@ -74,21 +82,19 @@ class SearchFor {
     // counter to get number of matched alphabets
     int count = 1;
 
-    if ((r == inGrid.length - 1) ||
-        (c ==
-            inGrid[0].length -
-                1)) // function to check if this is the last row and column value
+    // function to check if this is the last row and column value
+    if ((r == inGrid.length - 1) || (c == inGrid[0].length - 1)) {
       return false;
+    }
 
     int t = r + 1, k = c + 1, w = 1;
+    // function to match the pattern alphabets
     for (; w < text.length; w++, t++, k++) {
-      // function to match the pattern alphabets
       if (inGrid[t][k] == text.substring(w, 1 + w)) count++;
-      if (t == inGrid.length - 1 ||
-          k ==
-              inGrid[0].length -
-                  1) // function to check if this is the last row and column value
+      // function to check if this is the last row and column value
+      if (t == inGrid.length - 1 || k == inGrid[0].length - 1) {
         break;
+      }
     }
     return count == text.length;
   }

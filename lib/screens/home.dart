@@ -1,21 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:matrix_word_traversal_test/screens/about.dart';
 
-import 'package:matrix_word_traversal_test/screens/instructions.dart';
 import 'package:matrix_word_traversal_test/logic.dart';
 import 'package:matrix_word_traversal_test/model.dart';
+import 'package:matrix_word_traversal_test/screens/instructions.dart';
+import 'package:matrix_word_traversal_test/screens/about.dart';
+import 'package:matrix_word_traversal_test/screens/text_component.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   final int _initialCharCode = 65;
   SearchFor? searchFor;
   Size? totalSize;
@@ -25,6 +26,20 @@ class _MyHomePageState extends State<MyHomePage> {
   bool tp = true;
   AllDirectionalList? toBeColoured;
   bool _checker = true;
+  final textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // add value of whatever changes happens in
+    textController.addListener(() => textToBeSearched = textController.text);
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
 
   /// Reseting all the variables/inputs to null/empty
   void _reset() {
@@ -36,18 +51,18 @@ class _MyHomePageState extends State<MyHomePage> {
     tp = !tp;
     _checker = true;
     toBeColoured = null;
+    textController.text = '-';
   }
 
   /// Main calculations
   AllDirectionalList calculate(
       {required List<List<String>> gridValues, required String pattern}) {
     searchFor = SearchFor(inGrid: gridValues, text: pattern);
-    AllDirectionalList? value;
 
     /// searching at each indices to populate finds
     for (int i = 0; i < gridValues.length; i++) {
       for (int j = 0; j < gridValues[0].length; j++) {
-        value = searchFor!.searchAt(i, j);
+        searchFor!.searchAt(i, j);
       }
     }
 
@@ -65,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
         margin: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        color: CupertinoColors.systemBackground.resolveFrom(context),
+        color: ConstantValues.backgroundColor,
         child: SafeArea(
           top: false,
           child: CupertinoPicker(
@@ -99,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
         margin: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        color: CupertinoColors.systemBackground.resolveFrom(context),
+        color: ConstantValues.backgroundColor,
         child: SafeArea(
           top: false,
           child: CupertinoPicker(
@@ -125,11 +140,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
       height: 120.0,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: ConstantValues.backgroundColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black,
+            color: ConstantValues.boxShadowColor,
             blurRadius: 15.0,
             offset: Offset(0, 2),
           )
@@ -160,9 +175,11 @@ class _MyHomePageState extends State<MyHomePage> {
             child: _displayInfo('n', n),
           ),
           (m != null && n != null) // text-button
-              ? GestureDetector(
-                  onTap: () => setState(() => textToBeSearched = 'AS'),
-                  child: _displayInfo('text', textToBeSearched),
+              ? TextComponent(
+                  width: totalSize!.width * 2 / 5,
+                  controller: textController,
+                  writtenText: textToBeSearched,
+                  function: (value) => setState(() => textToBeSearched = value),
                 )
               : const SizedBox(),
         ],
@@ -179,11 +196,11 @@ class _MyHomePageState extends State<MyHomePage> {
             label == 'text' ? totalSize!.width * 2 / 5 : totalSize!.width / 5,
         margin: const EdgeInsets.symmetric(horizontal: 9.0, vertical: 10.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ConstantValues.backgroundColor,
           borderRadius: BorderRadius.circular(10.0),
           boxShadow: const [
             BoxShadow(
-              color: Colors.black,
+              color: ConstantValues.boxShadowColor,
               blurRadius: 10.0,
               offset: Offset(2, 2),
             )
@@ -258,15 +275,12 @@ class _MyHomePageState extends State<MyHomePage> {
         valuesInGrid![row][column] == 'null' ? '-' : valuesInGrid![row][column];
     return DataCell(
       DecoratedBox(
-        decoration: BoxDecoration(
-          // color: Colors.blue,
-          borderRadius: BorderRadius.circular(10.0),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
         child: Text(
           content,
           style: highlight
               ? const TextStyle(
-                  color: Colors.red,
+                  color: ConstantValues.highlightColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 30.0,
                 )
@@ -299,48 +313,78 @@ class _MyHomePageState extends State<MyHomePage> {
       _checker = false;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-
-        /// All action buttons in 1 function
-        actions: List.generate(
-          3,
-          (index) => Padding(
-            padding: const EdgeInsets.only(right: 10.0),
-            child: Tooltip(
-              message: index == 0
-                  ? 'Problem Statement'
-                  : (index == 1 ? 'Submit' : 'Reset'),
-              child: GestureDetector(
-                onTap: () => setState(() {
-                  switch (index) {
-                    case 0:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AboutScreen()),
-                      );
-                      break;
-                    case 1:
-                      toBeColoured = calculate(
-                          gridValues: valuesInGrid!, pattern: textToBeSearched);
-                      break;
-                    case 2:
-                      _reset();
-                      break;
-                  }
-                }),
-                child: Hero(
-                  tag:
-                      index == 0 ? "ABOUTHERO" : (index == 1 ? 'HERO' : 'hero'),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Center(
-                      child: Icon(index == 0
-                          ? Icons.info_outlined
-                          : (index == 1 ? Icons.check : Icons.restore)),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ConstantValues.accentColor,
+          title: Text(
+            widget.title,
+            style: const TextStyle(
+              color: ConstantValues.backgroundColor,
+              fontSize: 26.0,
+            ),
+          ),
+          actions: List.generate(
+            // All action buttons in 1 function
+            3,
+            (index) => Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: Tooltip(
+                message: index == 0
+                    ? 'Problem Statement'
+                    : (index == 1 ? 'Submit' : 'Reset'),
+                child: GestureDetector(
+                  onTap: () {
+                    switch (index) {
+                      case 0: // for Problem Statement Screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AboutScreen()),
+                        );
+                        break;
+                      case 1:
+                        if (valuesInGrid != null && textToBeSearched != '') {
+                          setState(() => toBeColoured = calculate(
+                              gridValues: valuesInGrid!,
+                              pattern: textToBeSearched));
+                        }
+                        if (valuesInGrid == null || _listEmpty(valuesInGrid!)) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            padding: EdgeInsets.only(
+                                bottom: 20.0,
+                                top: 20.0,
+                                left: 24.0,
+                                right: 24.0),
+                            elevation: 10.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            backgroundColor: ConstantValues.accentColor,
+                            content: Text(
+                                "Please first input all the values as per the instructions!!"),
+                          ));
+                        }
+                        break;
+                      case 2:
+                        setState(() => _reset());
+                        break;
+                    }
+                  },
+                  child: Hero(
+                    tag: index == 0
+                        ? "ABOUTHERO"
+                        : (index == 1 ? 'HERO' : 'hero'),
+                    child: CircleAvatar(
+                      backgroundColor: ConstantValues.backgroundColor,
+                      child: Center(
+                        child: Icon(index == 0
+                            ? Icons.info_outlined
+                            : (index == 1 ? Icons.check : Icons.restore)),
+                      ),
                     ),
                   ),
                 ),
@@ -348,30 +392,30 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-      ),
-      body: Center(
-        child: Stack(
-          children: <Widget>[
-            Positioned.fill(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: 20.0,
-                  left: 20.0,
-                  right: 20.0,
-                  bottom: MediaQuery.of(context).padding.bottom + 20.0,
+        body: Center(
+          child: Stack(
+            children: <Widget>[
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: 20.0,
+                    left: 20.0,
+                    right: 20.0,
+                    bottom: MediaQuery.of(context).padding.bottom + 20.0,
+                  ),
+                  child: _mainView(),
                 ),
-                child: _mainView(),
               ),
-            ),
-            Positioned(
-              bottom: 0.0,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom),
-                child: _bottomBar(),
+              Positioned(
+                bottom: 0.0,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom),
+                  child: _bottomBar(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:matrix_word_traversal_test/model.dart';
 
 /// Static Main Instructions Screen
 class AboutScreen extends StatelessWidget {
@@ -10,18 +11,24 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: ConstantValues.accentColor,
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: const Padding(
             padding: EdgeInsets.all(8.0),
             child: CircleAvatar(
-              backgroundColor: Colors.white,
+              backgroundColor: ConstantValues.backgroundColor,
               child: Center(child: Icon(Icons.chevron_left)),
             ),
           ),
         ),
-        title: Text(title),
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: ConstantValues.backgroundColor,
+            fontSize: 26.0,
+          ),
+        ),
       ),
       body: Hero(
         tag: "ABOUTHERO",

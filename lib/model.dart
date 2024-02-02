@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 /// Model to store Row Index and Column Index for a respective value.
 class PointerInfo {
   /// M corresponds to the row number or row index
@@ -44,4 +46,11 @@ bool piListContainsPI(
     if (list[k].m == item.m && list[k].n == item.n) return true;
   }
   return false;
+}
+
+class ConstantValues {
+  static const Color backgroundColor = Colors.white;
+  static const Color accentColor = Colors.blueAccent;
+  static const Color highlightColor = Colors.red;
+  static const Color boxShadowColor = Colors.black26;
 }

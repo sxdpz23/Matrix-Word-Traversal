@@ -11,9 +11,12 @@ class InstructionsScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Text(
-            'Please follow the below mentioned instructions : -',
-            style: Theme.of(context).textTheme.bodyLarge,
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Please follow the below mentioned instructions : -',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
           ),
           const SizedBox(height: 10.0),
           Text(
